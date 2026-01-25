@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rogelio Fuentes Transporte Privado</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#0f0f0f;
+  color:#fff;
+}
+.card{
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+  width:360px;
+  margin:20px auto;
+  box-shadow:0 0 25px rgba(0,0,0,.7);
+}
+.header{text-align:center;margin-bottom:12px;}
+.header .name{color:#f5c542;font-size:18px;font-weight:600;}
+.header .desc{font-size:12px;color:#ccc;}
+.header .title{color:#f5c542;font-size:16px;font-weight:600;margin-top:6px;}
+.header .rule{font-size:13px;color:#ccc;}
+
+.section{margin-top:14px;padding-top:10px;border-top:1px solid #333;}
+label{font-size:13px;color:#ccc;}
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  font-size:15px;
+}
+input{background:#2a2a2a;color:#fff;}
+button{background:#f5c542;color:#000;font-weight:bold;}
+button.secondary{background:#333;color:#fff;}
+.toggle{display:flex;gap:8px;font-size:13px;}
+
+.result{
+  margin-top:14px;
+  background:#111;
+  padding:12px;
+  border-radius:8px;
+  font-size:14px;
+}
+.result .row{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+
+.result .row span:last-child{
+  font-weight:bold;
+}
+
+.result .total{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid #333;
+  color:#f5c542;
+  font-size:16px;
+}
+
+#recibo{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0f0f0f;
+}
+.recibo-box{
+  max-width:360px;
+  margin:20px auto;
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+}
+.recibo-box h2{text-align:center;color:#f5c542;}
+.recibo-box hr{border:0;border-top:1px dashed #444;margin:10px 0;}
+.recibo-box .line{display:flex;justify-content:space-between;font-size:14px;}
+.recibo-box .total{font-size:18px;font-weight:bold;color:#f5c542;}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="name">Rogelio Fuentes</div>
+    <div class="desc">Motorista · Transporte Privado 24/7</div>
+    <div class="title">Cálculo de Viaje</div>
+    <div class="rule">30 min gratis</div>
+    <div class="rule">$2.50 por hora o fracción</div>
+  </div>
+
+  <div class="section">
+    <label>Kilómetros del viaje</label>
+    <input type="number" id="km">
+    <label>Precio del viaje ($) (opcional)</label>
+    <input type="number" id="precioManual">
+  </div>
+
+  <div class="section">
+    <div class="toggle">
+      <input type="checkbox" id="soloViaje">
+      <label>Solo viaje (sin espera)</label>
+    </div><br>
+
+    <div class="toggle">
+      <input type="checkbox" id="activarMadrugada">
+      <label>🌙 Aplicar precio de madrugada</label>
+    </div>
+
+    <label>Porcentaje madrugada (%)</label>
+    <input type="number" id="porcMadrugada" value="20">
+
+    <label>Hora llegada</label>
+    <input type="time" id="llegada">
+    <label>Hora salida</label>
+    <input type="time" id="salida">
+  </div>
+
+  <div class="section">
+    <label>Descuento adicional (%)</label>
+    <input type="number" id="descuento" value="0">
+    <button class="secondary" onclick="sinDescuento()">Sin descuento</button>
+  </div>
+
+  <button onclick="calcular()">Calcular total</button>
+  <button class="secondary" onclick="nuevo()">Nuevo cálculo</button>
+  <button class="secondary" onclick="verRecibo()">Ver recibo</button>
+  <button class="secondary" onclick="enviarCotizacion()">Enviar cotización</button>
+
+  <div class="result" id="resultado"></div>
+</div>
+
+<!-- RECIBO -->
+<div id="recibo">
+  <div class="recibo-box">
+    <h2>RECIBO</h2>
+    <div style="text-align:center;font-size:13px;">
+      Rogelio Fuentes<br>Transporte Privado 24/7
+    </div>
+    <hr>
+    <div id="fechaHora" style="text-align:center;font-size:13px;"></div>
+    <hr>
+
+    <div class="line"><span>Viaje</span><span id="rViaje"></span></div>
+    <div class="line"><span>Tiempo total espera</span><span id="rTotalEspera"></span></div>
+    <div class="line"><span>Cortesía (30 min)</span><span>30 min</span></div>
+    <div class="line"><span>Descuento por cortesía</span><span>-$2.50</span></div>
+    <div class="line"><span>Tiempo cobrado</span><span id="rCobrado"></span></div>
+    <div class="line"><span>Espera cobrada</span><span id="rEspera"></span></div>
+
+    <div class="line" id="rMadrugada" style="display:none;">
+      <span>Tarifa madrugada</span>
+      <span id="rMadrugadaVal"></span>
+    </div>
+
+    <div class="line"><span>Descuento adicional</span><span id="rDesc"></span></div>
+
+    <hr>
+    <div class="line total"><span>Total</span><span id="rTotal"></span></div>
+
+    <button class="secondary" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button class="secondary" onclick="cerrarRecibo()">Cerrar recibo</button>
+  </div>
+</div>
+
+<script>
+let datos = {};
+
+function precioViaje(km){
+  if(km<=30) return 10;
+  if(km<=60) return 20;
+  if(km<=90) return 30;
+  if(km<=120) return 40;
+  if(km<=150) return 50;
+  return 0;
+}
+
+function minToText(min){
+  let h=Math.floor(min/60);
+  let m=min%60;
+  return `${h} h ${m} min`;
+}
+
+function calcular(){
+  let kmv=Number(km.value);
+  let precioManualVal=Number(precioManual.value);
+  let solo=soloViaje.checked;
+  let madrugada=activarMadrugada.checked;
+  let porc=Number(porcMadrugada.value)||0;
+  let desc=Number(descuento.value)||0;
+
+  if(!kmv && !precioManualVal){
+    alert("Ingrese kilómetros o precio");
+    return;
+  }
+
+  let viaje=precioManualVal>0?precioManualVal:precioViaje(kmv);
+  let totalMin=0,cobrableMin=0,espera=0;
+
+  if(!solo && llegada.value && salida.value){
+    let [h1,m1]=llegada.value.split(":").map(Number);
+    let [h2,m2]=salida.value.split(":").map(Number);
+    totalMin=(h2*60+m2)-(h1*60+m1);
+    cobrableMin=Math.max(0,totalMin-30);
+    if(cobrableMin>0) espera=Math.ceil(cobrableMin/60)*2.5;
+  }
+
+  let recargo=madrugada?(viaje+espera)*(porc/100):0;
+  let sub=viaje+espera+recargo;
+  let descAdic=sub*(desc/100);
+  let total=sub-descAdic;
+
+  datos={viaje,espera,total,totalMin,cobrableMin,recargo,porc,descAdic,desc};
+
+  resultado.innerHTML = `
+  <div class="row">
+    <span>Viaje</span>
+    <span>$${viaje.toFixed(2)}</span>
+  </div>
+  <div class="row">
+    <span>Espera</span>
+    <span>$${espera.toFixed(2)}</span>
+  </div>
+  <div class="row">
+    <span>Descuento</span>
+    <span>-$${descAdic.toFixed(2)}</span>
+  </div>
+  <div class="row total">
+    <span>Total</span>
+    <span>$${total.toFixed(2)}</span>
+  </div>
+`;
+
+}
+
+function verRecibo(){
+  recibo.style.display="block";
+  fechaHora.innerText=new Date().toLocaleString();
+  rViaje.innerText="$"+datos.viaje.toFixed(2);
+  rTotalEspera.innerText=minToText(datos.totalMin);
+  rCobrado.innerText=minToText(datos.cobrableMin);
+  rEspera.innerText="$"+datos.espera.toFixed(2);
+  rDesc.innerText=`-${datos.desc}% ($${datos.descAdic.toFixed(2)})`;
+  rTotal.innerText="$"+datos.total.toFixed(2);
+
+  if(datos.recargo>0){
+    rMadrugada.style.display="flex";
+    rMadrugadaVal.innerText=`${datos.porc}% ($${datos.recargo.toFixed(2)})`;
+  }else{
+    rMadrugada.style.display="none";
+  }
+}
+
+function cerrarRecibo(){recibo.style.display="none";}
+
+function enviarWhatsApp(){
+  let f = new Date();
+  let fecha =
+    f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`RECIBO
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Tiempo total espera
+${minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Descuento por cortesía
+-$2.50
+
+Tiempo cobrado
+${minToText(datos.cobrableMin)}
+
+Espera cobrada
+$${datos.espera.toFixed(2)}
+
+Descuento adicional
+-${datos.desc}% ($${datos.descAdic.toFixed(2)})
+
+TOTAL
+$${datos.total.toFixed(2)}`;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+function enviarCotizacion(){
+  let f = new Date();
+  let fecha =
+    f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`COTIZACIÓN DE SERVICIO
+
+Hola, con gusto le comparto la cotización del viaje
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Tiempo total espera
+${minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Tiempo estimado cobrado
+${minToText(datos.cobrableMin)}
+
+Tarifa de espera
+$2.50 por hora o fracción
+
+Espera estimada
+$${datos.espera.toFixed(2)}
+
+
+Total estimado
+$${datos.total.toFixed(2)}
+
+La espera se cobra por hora o fracción.
+El precio puede variar según el tiempo real.
+
+Rogelio Fuentes
+Transporte Privado 24/7`;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+
+function nuevo(){
+  km.value="";precioManual.value="";llegada.value="";
+  salida.value="";descuento.value=0;resultado.innerHTML="";
+}
+function sinDescuento(){descuento.value=0;calcular();}
+</script>
+
+</body>
+</html>
