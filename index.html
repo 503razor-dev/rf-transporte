@@ -175,13 +175,31 @@ button.secondary{background:#333;color:#fff;}
 let datos = {};
 
 function precioViaje(km){
-  if(km<=30) return 10;
-  if(km<=60) return 20;
-  if(km<=90) return 30;
-  if(km<=120) return 40;
-  if(km<=150) return 50;
+  if (km <= 30) return 10;
+  if (km <= 60) return 20;
+
+  if (km <= 90) return 30;
+  if (km <= 120) return 40;
+  if (km <= 150) return 50;
+  if (km <= 180) return 60;
+  if (km <= 210) return 70;
+  if (km <= 240) return 80;
+
+  if (km <= 270) return 90;
+  if (km <= 300) return 100;
+  if (km <= 330) return 115;
+  if (km <= 360) return 130;
+  if (km <= 390) return 145;
+  if (km <= 420) return 160;
+  if (km <= 450) return 175;
+  if (km <= 480) return 190;
+  if (km <= 510) return 205;
+  if (km <= 540) return 235;
+  if (km <= 600) return 250;
+
   return 0;
 }
+
 
 function minToText(min){
   let h=Math.floor(min/60);
