@@ -98,22 +98,33 @@ button.secondary{background:#333;color:#fff;}
   </div>
 
   <div class="section">
-    <label>Kilómetros del viaje</label>
-    <input type="number" id="km">
+    <label>Distancia del viaje</label>
+
+<select id="unidad" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="km">Kilómetros (km)</option>
+  <option value="mi">Millas (mi)</option>
+</select>
+
+<input type="number" id="km" placeholder="Ingrese la distancia">
+
     <label>Precio del viaje ($) (opcional)</label>
     <input type="number" id="precioManual">
   </div>
 
   <div class="section">
-    <div class="toggle">
-      <input type="checkbox" id="soloViaje">
-      <label>Solo viaje (sin espera)</label>
-    </div><br>
+    <label>Tipo de servicio</label>
+<select id="soloViaje" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="no">Viaje con espera</option>
+  <option value="si">Solo viaje (sin espera)</option>
+</select>
 
-    <div class="toggle">
-      <input type="checkbox" id="activarMadrugada">
-      <label>🌙 Aplicar precio de madrugada</label>
-    </div>
+
+<label>Tarifa de madrugada</label>
+<select id="activarMadrugada" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="no">No aplicar</option>
+  <option value="si">Aplicar madrugada 🌙</option>
+</select>
+
 
     <label>Porcentaje madrugada (%)</label>
     <input type="number" id="porcMadrugada" value="20">
@@ -211,10 +222,17 @@ function minToText(min){
 }
 
 function calcular(){
-  let kmv=Number(km.value);
+let distancia = Number(km.value);
+let unidad = document.getElementById("unidad").value;
+
+// Convertir millas a kilómetros si aplica
+let kmv = unidad === "mi" ? distancia * 1.609 : distancia;
+
   let precioManualVal=Number(precioManual.value);
-  let solo=soloViaje.checked;
-  let madrugada=activarMadrugada.checked;
+let solo = soloViaje.value === "si";
+
+let madrugada = activarMadrugada.value === "si";
+
   let porc=Number(porcMadrugada.value)||0;
   let desc=Number(descuento.value)||0;
 
