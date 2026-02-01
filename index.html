@@ -96,6 +96,12 @@ button.secondary{background:#333;color:#fff;}
     <div class="rule">30 min gratis</div>
     <div class="rule">$2.50 por hora o fracción</div>
   </div>
+<label>Viaje activo</label>
+<select id="viajeActivo" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="1">Viaje 1</option>
+  <option value="2">Viaje 2</option>
+  <option value="3">Viaje 3</option>
+</select>
 
   <div class="section">
     <label>Distancia del viaje</label>
@@ -133,6 +139,10 @@ button.secondary{background:#333;color:#fff;}
     <input type="time" id="llegada">
     <label>Hora salida</label>
     <input type="time" id="salida">
+    <button class="secondary" onclick="guardarLlegada()">Guardar llegada</button>
+<button class="secondary" onclick="finalizarViaje()">Finalizar viaje</button>
+<button class="secondary" onclick="finalizarTodos()">Finalizar TODOS los viajes</button>
+
   </div>
 <label>Horas de espera (manual)</label>
 <input type="number" id="esperaManual" step="0.1" placeholder="Ej: 1.5">
@@ -183,6 +193,7 @@ button.secondary{background:#333;color:#fff;}
     <button class="secondary" onclick="cerrarRecibo()">Cerrar recibo</button>
   </div>
 </div>
+
 
 <script>
 let datos = {};
@@ -415,6 +426,128 @@ function nuevo(){
   salida.value="";descuento.value=0;resultado.innerHTML="";
 }
 function sinDescuento(){descuento.value=0;calcular();}
+// ===============================
+// GUARDAR OPCIONES SELECCIONADAS
+// ===============================
+
+// Guardar cambios automáticamente
+function guardarOpciones() {
+  localStorage.setItem("unidad", document.getElementById("unidad")?.value);
+  localStorage.setItem("soloViaje", document.getElementById("soloViaje")?.value);
+  localStorage.setItem("madrugada", document.getElementById("activarMadrugada")?.value);
+}
+
+// Restaurar opciones al abrir la app
+function restaurarOpciones() {
+  const unidad = localStorage.getItem("unidad");
+  const solo = localStorage.getItem("soloViaje");
+  const madrugada = localStorage.getItem("madrugada");
+
+  if (unidad && document.getElementById("unidad")) {
+    document.getElementById("unidad").value = unidad;
+  }
+
+  if (solo && document.getElementById("soloViaje")) {
+    document.getElementById("soloViaje").value = solo;
+  }
+
+  if (madrugada && document.getElementById("activarMadrugada")) {
+    document.getElementById("activarMadrugada").value = madrugada;
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", restaurarOpciones);
+
+// Detectar cambios
+document.getElementById("unidad")?.addEventListener("change", guardarOpciones);
+document.getElementById("soloViaje")?.addEventListener("change", guardarOpciones);
+document.getElementById("activarMadrugada")?.addEventListener("change", guardarOpciones);
+// ===============================
+// GUARDAR Y RETOMAR VIAJE
+// ===============================
+
+function guardarLlegada() {
+  if (!llegada.value) {
+    alert("Ingrese la hora de llegada antes de guardar");
+    return;
+  }
+
+  guardarViajeActual();
+  alert("Viaje guardado correctamente");
+}
+
+
+
+// Restaurar llegada si existe
+document.addEventListener("DOMContentLoaded", () => {
+  const llegadaGuardada = localStorage.getItem("llegadaGuardada");
+  const distanciaGuardada = localStorage.getItem("distanciaGuardada");
+  const unidadGuardada = localStorage.getItem("unidadGuardada");
+
+  if (llegadaGuardada) {
+    llegada.value = llegadaGuardada;
+  }
+
+  if (distanciaGuardada) {
+    km.value = distanciaGuardada;
+  }
+
+  if (unidadGuardada && document.getElementById("unidad")) {
+    document.getElementById("unidad").value = unidadGuardada;
+  }
+});
+
+function finalizarViaje() {
+  localStorage.removeItem(viajeKey("llegada"));
+  localStorage.removeItem(viajeKey("distancia"));
+  localStorage.removeItem(viajeKey("unidad"));
+
+  llegada.value = "";
+  salida.value = "";
+  km.value = "";
+
+  alert("Viaje finalizado");
+}
+// ===============================
+// MANEJO DE VIAJES MÚLTIPLES (1–3)
+// ===============================
+
+function viajeKey(nombre) {
+  const v = document.getElementById("viajeActivo").value;
+  return `viaje${v}_${nombre}`;
+}
+
+function guardarViajeActual() {
+  localStorage.setItem(viajeKey("llegada"), llegada.value);
+  localStorage.setItem(viajeKey("distancia"), km.value);
+  localStorage.setItem(viajeKey("unidad"), document.getElementById("unidad").value);
+}
+
+function cargarViajeActual() {
+  llegada.value = localStorage.getItem(viajeKey("llegada")) || "";
+  km.value = localStorage.getItem(viajeKey("distancia")) || "";
+  const u = localStorage.getItem(viajeKey("unidad"));
+  if (u) document.getElementById("unidad").value = u;
+}
+document.getElementById("viajeActivo").addEventListener("change", () => {
+  cargarViajeActual();
+});
+
+function finalizarTodos() {
+  for (let i = 1; i <= 3; i++) {
+    localStorage.removeItem(`viaje${i}_llegada`);
+    localStorage.removeItem(`viaje${i}_distancia`);
+    localStorage.removeItem(`viaje${i}_unidad`);
+  }
+
+  llegada.value = "";
+  salida.value = "";
+  km.value = "";
+
+  alert("Todos los viajes han sido finalizados");
+}
+
 </script>
 
 </body>
