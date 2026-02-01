@@ -469,13 +469,20 @@ document.getElementById("activarMadrugada")?.addEventListener("change", guardarO
 
 function guardarLlegada() {
   if (!llegada.value) {
-    alert("Ingrese la hora de llegada antes de guardar");
+    alert("Ingrese la hora de llegada");
     return;
   }
 
-  guardarViajeActual();
-  alert("Viaje guardado correctamente");
+  // Guardar SOLO horas
+  localStorage.setItem("horaLlegada", llegada.value);
+
+  if (salida.value) {
+    localStorage.setItem("horaSalida", salida.value);
+  }
+
+  alert("Horas guardadas correctamente");
 }
+
 
 
 
@@ -499,16 +506,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function finalizarViaje() {
-  localStorage.removeItem(viajeKey("llegada"));
-  localStorage.removeItem(viajeKey("distancia"));
-  localStorage.removeItem(viajeKey("unidad"));
+  localStorage.removeItem("horaLlegada");
+  localStorage.removeItem("horaSalida");
 
   llegada.value = "";
   salida.value = "";
-  km.value = "";
 
-  alert("Viaje finalizado");
+  alert("Horas borradas");
 }
+
 // ===============================
 // MANEJO DE VIAJES MÚLTIPLES (1–3)
 // ===============================
@@ -547,6 +553,13 @@ function finalizarTodos() {
 
   alert("Todos los viajes han sido finalizados");
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const hLlegada = localStorage.getItem("horaLlegada");
+  const hSalida = localStorage.getItem("horaSalida");
+
+  if (hLlegada) llegada.value = hLlegada;
+  if (hSalida) salida.value = hSalida;
+});
 
 </script>
 
