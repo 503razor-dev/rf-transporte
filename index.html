@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rogelio Fuentes Transporte Privado</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#0f0f0f;
+  color:#fff;
+}
+.card{
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+  width:360px;
+  margin:20px auto;
+  box-shadow:0 0 25px rgba(0,0,0,.7);
+}
+.header{text-align:center;margin-bottom:12px;}
+.header .name{color:#f5c542;font-size:18px;font-weight:600;}
+.header .desc{font-size:12px;color:#ccc;}
+.header .title{color:#f5c542;font-size:16px;font-weight:600;margin-top:6px;}
+.header .rule{font-size:13px;color:#ccc;}
+
+.section{margin-top:14px;padding-top:10px;border-top:1px solid #333;}
+label{font-size:13px;color:#ccc;display:block;margin-top:8px;}
+input,button,select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  font-size:15px;
+  box-sizing:border-box;
+}
+input,select{background:#2a2a2a;color:#fff;}
+button{background:#f5c542;color:#000;font-weight:bold;cursor:pointer;}
+button.secondary{background:#333;color:#fff;}
+button.danger{background:#8b1e1e;color:#fff;}
+button.success{background:#1f7a3f;color:#fff;}
+
+.result{
+  margin-top:14px;
+  background:#111;
+  padding:12px;
+  border-radius:8px;
+  font-size:14px;
+}
+.result .row{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  gap:10px;
+}
+.result .row span:last-child{
+  font-weight:bold;
+  text-align:right;
+}
+.result .total{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid #333;
+  color:#f5c542;
+  font-size:16px;
+}
+
+.badge{
+  background:#2c2c2c;
+  color:#f5c542;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:13px;
+  margin-top:8px;
+  text-align:center;
+}
+.badge.info{color:#8fd3ff;}
+.badge.warn{color:#ffd66b;}
+.badge.ok{color:#9cffb1;}
+
+.espera-lista{
+  margin-top:10px;
+  background:#111;
+  border-radius:10px;
+  padding:10px;
+}
+.espera-item{
+  border-bottom:1px solid #2a2a2a;
+  padding:10px 0;
+  font-size:13px;
+}
+.espera-item:last-child{
+  border-bottom:none;
+}
+.espera-item strong{
+  color:#f5c542;
+}
+.espera-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.espera-info{
+  flex:1;
+}
+.espera-delete{
+  width:auto;
+  min-width:44px;
+  padding:8px 10px;
+  margin-top:0;
+  background:#8b1e1e;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+}
+.espera-total{
+  margin-top:8px;
+  font-size:13px;
+  color:#ccc;
+  text-align:right;
+}
+
+.botones-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+
+.botones-grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+
+#recibo{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0f0f0f;
+  overflow:auto;
+  z-index:999;
+}
+.recibo-box{
+  max-width:360px;
+  margin:20px auto;
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+}
+.recibo-box h2{text-align:center;color:#f5c542;}
+.recibo-box hr{border:0;border-top:1px dashed #444;margin:10px 0;}
+.recibo-box .line{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  gap:8px;
+  margin-bottom:6px;
+}
+.recibo-box .line span:last-child{
+  text-align:right;
+}
+.recibo-box .total{font-size:18px;font-weight:bold;color:#f5c542;}
+.recibo-esperas{
+  background:#111;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+  font-size:13px;
+}
+.small-note{
+  font-size:12px;
+  color:#aaa;
+  margin-top:6px;
+}
+
+.historial-lista{
+  margin-top:10px;
+  background:#111;
+  border-radius:10px;
+  padding:10px;
+}
+.historial-item{
+  border-bottom:1px solid #2a2a2a;
+  padding:10px 0;
+  font-size:13px;
+}
+.historial-item:last-child{
+  border-bottom:none;
+}
+.historial-item strong{
+  color:#f5c542;
+}
+.historial-acciones{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+.historial-acciones button{
+  margin-top:0;
+  padding:8px;
+  font-size:13px;
+}
+.historial-resumen{
+  margin-top:8px;
+  font-size:13px;
+  color:#ccc;
+  text-align:right;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="name">Rogelio Fuentes</div>
+    <div class="desc">Motorista · Transporte Privado 24/7</div>
+    <div class="title">Cálculo de Viaje</div>
+    <div class="rule">30 min gratis</div>
+    <div class="rule">$2.50 por hora o fracción</div>
+  </div>
+
+  <label>Viaje activo</label>
+  <select id="viajeActivo">
+    <option value="1">Viaje 1</option>
+    <option value="2">Viaje 2</option>
+    <option value="3">Viaje 3</option>
+  </select>
+
+  <div class="section">
+    <label>Distancia del viaje</label>
+    <select id="unidad">
+      <option value="km">Kilómetros (km)</option>
+      <option value="mi">Millas (mi)</option>
+    </select>
+
+    <input type="number" id="km" placeholder="Ingrese la distancia">
+
+    <label>Precio del viaje ($) (opcional)</label>
+    <input type="number" id="precioManual" placeholder="Ej: 15">
+  </div>
+
+  <div class="section">
+    <label>Tipo de servicio</label>
+    <select id="soloViaje">
+      <option value="no">Viaje con espera</option>
+      <option value="si">Solo viaje (sin espera)</option>
+    </select>
+
+    <label>Tarifa de madrugada</label>
+    <select id="activarMadrugada">
+      <option value="no">No aplicar</option>
+      <option value="si">Aplicar madrugada 🌙</option>
+    </select>
+
+    <label>Porcentaje madrugada (%)</label>
+    <input type="number" id="porcMadrugada" value="20">
+
+    <label>Hora llegada</label>
+    <input type="time" id="llegada">
+
+    <label>Hora salida</label>
+    <input type="time" id="salida">
+
+    <div class="badge info" id="modoAutomatico">
+      Modo actual: primera espera por hora llegada / salida + paradas adicionales
+    </div>
+
+    <div class="botones-grid">
+      <button class="secondary" onclick="guardarLlegada()">Guardar horas</button>
+      <button class="secondary" onclick="finalizarViaje()">Finalizar viaje</button>
+    </div>
+
+    <button class="secondary" onclick="finalizarTodos()">Finalizar TODOS los viajes</button>
+  </div>
+
+  <div class="section">
+    <label>Horas de espera (manual)</label>
+    <input type="number" id="esperaManual" step="0.1" placeholder="Ej: 1.5">
+
+    <div class="small-note">
+      Si usas hora llegada/salida y además registras paradas, la app sumará ambos tiempos.
+      La espera manual solo se usa si no hay horas ni paradas.
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Nombre de parada / lugar</label>
+    <input type="text" id="nombreParada" placeholder="Ej: Médico, Farmacia, Banco">
+
+    <div class="botones-grid">
+      <button class="secondary" onclick="iniciarEspera()">Iniciar espera</button>
+      <button class="secondary" onclick="finalizarEspera()">Finalizar espera</button>
+    </div>
+
+    <button class="danger" onclick="limpiarEsperas()">Borrar esperas de este viaje</button>
+
+    <div class="badge" id="estadoEspera">Sin espera en curso</div>
+
+    <div class="espera-lista" id="listaEsperas">
+      <div class="espera-item">No hay esperas registradas</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Descuento adicional (%)</label>
+    <input type="number" id="descuento" value="0">
+    <button class="secondary" onclick="sinDescuento()">Sin descuento</button>
+  </div>
+
+  <button onclick="calcular()">Calcular total</button>
+  <button class="success" onclick="guardarEnHistorial()">Guardar en historial</button>
+  <button class="secondary" onclick="nuevo()">Nuevo cálculo</button>
+  <button class="secondary" onclick="verRecibo()">Ver recibo</button>
+  <button class="secondary" onclick="enviarCotizacion()">Enviar cotización</button>
+
+  <div class="result" id="resultado"></div>
+
+  <div class="section">
+    <label>Historial de viajes</label>
+
+    <label>Buscar por fecha</label>
+    <input type="date" id="filtroFecha">
+
+    <div class="botones-grid-3">
+      <button class="secondary" onclick="buscarPorFecha()">Buscar</button>
+      <button class="secondary" onclick="mostrarTodosHistorial()">Mostrar todos</button>
+      <button class="secondary" onclick="limpiarBusquedaHistorial()">Limpiar búsqueda</button>
+    </div>
+
+    <button class="secondary" onclick="descargarPDFHistorialActual()">Descargar PDF</button>
+
+    <div class="badge ok" id="estadoHistorial">Mostrando todos los registros</div>
+
+    <div class="historial-lista" id="listaHistorial">
+      <div class="historial-item">No hay viajes guardados</div>
+    </div>
+  </div>
+</div>
+
+<div id="recibo">
+  <div class="recibo-box">
+    <h2>RECIBO</h2>
+
+    <div style="text-align:center;font-size:13px;">
+      Rogelio Fuentes<br>Transporte Privado 24/7
+    </div>
+
+    <hr>
+
+    <div id="fechaHora" style="text-align:center;font-size:13px;"></div>
+
+    <hr>
+
+    <div class="line"><span>Viaje</span><span id="rViaje"></span></div>
+    <div class="line"><span>Método usado</span><span id="rMetodo"></span></div>
+    <div class="line"><span>Primera espera</span><span id="rPrimeraEspera"></span></div>
+    <div class="line"><span>Paradas adicionales</span><span id="rParadasExtra"></span></div>
+    <div class="line"><span>Tiempo total espera</span><span id="rTotalEspera"></span></div>
+    <div class="line"><span>Cortesía (30 min)</span><span>30 min</span></div>
+    <div class="line"><span>Tiempo cobrado</span><span id="rCobrado"></span></div>
+    <div class="line"><span>Espera cobrada</span><span id="rEspera"></span></div>
+
+    <div class="line" id="rMadrugada" style="display:none;">
+      <span>Tarifa madrugada</span>
+      <span id="rMadrugadaVal"></span>
+    </div>
+
+    <div class="line"><span>Descuento adicional</span><span id="rDesc"></span></div>
+
+    <div id="rDetalleEsperasWrap" class="recibo-esperas" style="display:none;">
+      <strong>Detalle de esperas</strong>
+      <div id="rDetalleEsperas" style="margin-top:8px;"></div>
+    </div>
+
+    <hr>
+
+    <div class="line total"><span>Total</span><span id="rTotal"></span></div>
+
+    <button class="secondary" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button class="secondary" onclick="cerrarRecibo()">Cerrar recibo</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+let datos = {};
+let filtroFechaActual = "";
+
+function precioViaje(km) {
+  if (km <= 30) return 10;
+  if (km <= 60) return 20;
+  if (km <= 90) return 30;
+  if (km <= 120) return 40;
+  if (km <= 150) return 50;
+  if (km <= 180) return 60;
+  if (km <= 210) return 70;
+  if (km <= 240) return 80;
+  if (km <= 270) return 90;
+  if (km <= 300) return 100;
+  if (km <= 330) return 115;
+  if (km <= 360) return 130;
+  if (km <= 390) return 145;
+  if (km <= 420) return 160;
+  if (km <= 450) return 175;
+  if (km <= 480) return 190;
+  if (km <= 510) return 205;
+  if (km <= 540) return 235;
+  if (km <= 600) return 250;
+  return 0;
+}
+
+function minToText(min){
+  min = Math.max(0, Math.round(min || 0));
+  let h = Math.floor(min / 60);
+  let m = min % 60;
+  return `${h} h ${m} min`;
+}
+
+function capitalizar(texto) {
+  if (!texto) return "";
+  texto = texto.trim();
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+}
+
+function formatearFechaHora(fecha, tipo = "") {
+  const hora = fecha.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+
+  const fechaTexto = fecha.toLocaleDateString("es-SV");
+
+  return `${tipo.charAt(0).toUpperCase() + tipo.slice(1)}: ${hora} - ${fechaTexto}`;
+}
+
+function formatearFechaSolo(fechaISO) {
+  const fecha = new Date(fechaISO);
+  return fecha.toLocaleDateString("es-SV");
+}
+
+function soloFechaISO(fechaISO) {
+  const fecha = new Date(fechaISO);
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function viajeKey(nombre) {
+  const v = document.getElementById("viajeActivo").value;
+  return `viaje${v}_${nombre}`;
+}
+
+function obtenerEsperas() {
+  try {
+    return JSON.parse(localStorage.getItem(viajeKey("esperas")) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function guardarEsperas(lista) {
+  localStorage.setItem(viajeKey("esperas"), JSON.stringify(lista));
+}
+
+function obtenerEsperaActiva() {
+  try {
+    return JSON.parse(localStorage.getItem(viajeKey("esperaActiva")) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function guardarEsperaActiva(data) {
+  if (data) {
+    localStorage.setItem(viajeKey("esperaActiva"), JSON.stringify(data));
+  } else {
+    localStorage.removeItem(viajeKey("esperaActiva"));
+  }
+}
+
+function sumarMinutosEsperas() {
+  return obtenerEsperas().reduce((acc, item) => acc + (Number(item.minutos) || 0), 0);
+}
+
+function calcularPrimeraEsperaDesdeHoras() {
+  const llegadaVal = document.getElementById("llegada").value;
+  const salidaVal = document.getElementById("salida").value;
+
+  if (!llegadaVal || !salidaVal) return 0;
+
+  let [h1, m1] = llegadaVal.split(":").map(Number);
+  let [h2, m2] = salidaVal.split(":").map(Number);
+
+  let total = (h2 * 60 + m2) - (h1 * 60 + m1);
+  if (total < 0) total = 0;
+
+  return total;
+}
+
+function actualizarModoAutomatico() {
+  const badge = document.getElementById("modoAutomatico");
+  const primera = calcularPrimeraEsperaDesdeHoras();
+  const extras = sumarMinutosEsperas();
+
+  if (primera > 0 && extras > 0) {
+    badge.className = "badge warn";
+    badge.innerHTML = "Modo actual: primera espera + paradas adicionales";
+  } else if (primera > 0) {
+    badge.className = "badge info";
+    badge.innerHTML = "Modo actual: solo primera espera por hora llegada / salida";
+  } else if (extras > 0) {
+    badge.className = "badge warn";
+    badge.innerHTML = "Modo actual: solo paradas adicionales";
+  } else {
+    badge.className = "badge info";
+    badge.innerHTML = "Modo actual: esperando horas o paradas";
+  }
+}
+
+function renderEsperas() {
+  const lista = obtenerEsperas();
+  const activa = obtenerEsperaActiva();
+  const contenedor = document.getElementById("listaEsperas");
+  const estado = document.getElementById("estadoEspera");
+
+  if (activa) {
+    const minutosActuales = Math.floor((Date.now() - activa.inicio) / 60000);
+    estado.innerHTML = `⏱ Espera en curso: <strong>${activa.nombre}</strong> · ${minToText(minutosActuales)}`;
+  } else {
+    estado.textContent = "Sin espera en curso";
+  }
+
+  if (!lista.length) {
+    contenedor.innerHTML = `<div class="espera-item">No hay esperas registradas</div>`;
+    actualizarModoAutomatico();
+    return;
+  }
+
+  let html = "";
+  lista.forEach((item, index) => {
+    html += `
+      <div class="espera-item">
+        <div class="espera-top">
+          <div class="espera-info">
+            <strong>${index + 1}. ${item.nombre}</strong><br>
+            ${item.inicioTexto}<br>
+            ${item.finTexto}<br>
+            Tiempo: ${minToText(item.minutos)}
+          </div>
+          <button class="espera-delete" onclick="eliminarEspera(${index})" title="Eliminar esta parada">🗑</button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `<div class="espera-total">Total acumulado en paradas: ${minToText(sumarMinutosEsperas())}</div>`;
+  contenedor.innerHTML = html;
+  actualizarModoAutomatico();
+}
+
+function iniciarEspera() {
+  const solo = document.getElementById("soloViaje").value === "si";
+  if (solo) {
+    alert("El viaje está configurado como 'Solo viaje (sin espera)'.");
+    return;
+  }
+
+  const activa = obtenerEsperaActiva();
+  if (activa) {
+    alert("Ya hay una espera en curso. Primero finalícela.");
+    return;
+  }
+
+  const nombreInput = document.getElementById("nombreParada").value.trim();
+  const nombre = capitalizar(nombreInput || "parada sin nombre");
+  const ahora = new Date();
+
+  guardarEsperaActiva({
+    nombre,
+    inicio: ahora.getTime(),
+    inicioTexto: formatearFechaHora(ahora, "inicio")
+  });
+
+  document.getElementById("nombreParada").value = nombre;
+  renderEsperas();
+  guardarViajeActual();
+
+  alert("Espera iniciada correctamente");
+}
+
+function finalizarEspera() {
+  const activa = obtenerEsperaActiva();
+  if (!activa) {
+    alert("No hay una espera iniciada.");
+    return;
+  }
+
+  const fin = new Date();
+  let minutos = Math.round((fin.getTime() - activa.inicio) / 60000);
+
+  if (minutos < 0) minutos = 0;
+
+  const lista = obtenerEsperas();
+  lista.push({
+    nombre: activa.nombre,
+    inicio: activa.inicio,
+    inicioTexto: activa.inicioTexto,
+    fin: fin.getTime(),
+    finTexto: formatearFechaHora(fin, "fin"),
+    minutos
+  });
+
+  guardarEsperas(lista);
+  guardarEsperaActiva(null);
+  document.getElementById("nombreParada").value = "";
+  renderEsperas();
+  guardarViajeActual();
+
+  alert(`Espera agregada: ${minToText(minutos)}`);
+}
+
+function eliminarEspera(index) {
+  const lista = obtenerEsperas();
+
+  if (index < 0 || index >= lista.length) return;
+  if (!confirm("¿Desea eliminar esta parada?")) return;
+
+  lista.splice(index, 1);
+  guardarEsperas(lista);
+  renderEsperas();
+  guardarViajeActual();
+
+  alert("Parada eliminada correctamente");
+}
+
+function limpiarEsperas() {
+  if (!confirm("¿Desea borrar todas las esperas de este viaje?")) return;
+  guardarEsperas([]);
+  guardarEsperaActiva(null);
+  renderEsperas();
+  guardarViajeActual();
+  alert("Esperas borradas");
+}
+
+function guardarOpciones() {
+  localStorage.setItem("unidad", document.getElementById("unidad").value);
+  localStorage.setItem("soloViaje", document.getElementById("soloViaje").value);
+  localStorage.setItem("madrugada", document.getElementById("activarMadrugada").value);
+  localStorage.setItem("porcMadrugada", document.getElementById("porcMadrugada").value);
+}
+
+function restaurarOpciones() {
+  const unidad = localStorage.getItem("unidad");
+  const solo = localStorage.getItem("soloViaje");
+  const madrugada = localStorage.getItem("madrugada");
+  const porc = localStorage.getItem("porcMadrugada");
+
+  if (unidad) document.getElementById("unidad").value = unidad;
+  if (solo) document.getElementById("soloViaje").value = solo;
+  if (madrugada) document.getElementById("activarMadrugada").value = madrugada;
+  if (porc) document.getElementById("porcMadrugada").value = porc;
+}
+
+function guardarLlegada() {
+  const llegadaInput = document.getElementById("llegada").value;
+  if (!llegadaInput) {
+    alert("Ingrese la hora de llegada");
+    return;
+  }
+
+  localStorage.setItem(viajeKey("llegada"), llegadaInput);
+  localStorage.setItem(viajeKey("salida"), document.getElementById("salida").value || "");
+  localStorage.setItem(viajeKey("distancia"), document.getElementById("km").value || "");
+  localStorage.setItem(viajeKey("unidad"), document.getElementById("unidad").value);
+  localStorage.setItem(viajeKey("precioManual"), document.getElementById("precioManual").value || "");
+  localStorage.setItem(viajeKey("esperaManual"), document.getElementById("esperaManual").value || "");
+  localStorage.setItem(viajeKey("descuento"), document.getElementById("descuento").value || "0");
+
+  actualizarModoAutomatico();
+  alert("Datos del viaje guardados correctamente");
+}
+
+function guardarViajeActual() {
+  localStorage.setItem(viajeKey("llegada"), document.getElementById("llegada").value || "");
+  localStorage.setItem(viajeKey("salida"), document.getElementById("salida").value || "");
+  localStorage.setItem(viajeKey("distancia"), document.getElementById("km").value || "");
+  localStorage.setItem(viajeKey("unidad"), document.getElementById("unidad").value);
+  localStorage.setItem(viajeKey("precioManual"), document.getElementById("precioManual").value || "");
+  localStorage.setItem(viajeKey("esperaManual"), document.getElementById("esperaManual").value || "");
+  localStorage.setItem(viajeKey("descuento"), document.getElementById("descuento").value || "0");
+}
+
+function cargarViajeActual() {
+  document.getElementById("llegada").value = localStorage.getItem(viajeKey("llegada")) || "";
+  document.getElementById("salida").value = localStorage.getItem(viajeKey("salida")) || "";
+  document.getElementById("km").value = localStorage.getItem(viajeKey("distancia")) || "";
+  document.getElementById("precioManual").value = localStorage.getItem(viajeKey("precioManual")) || "";
+  document.getElementById("esperaManual").value = localStorage.getItem(viajeKey("esperaManual")) || "";
+  document.getElementById("descuento").value = localStorage.getItem(viajeKey("descuento")) || "0";
+
+  const unidadGuardada = localStorage.getItem(viajeKey("unidad"));
+  if (unidadGuardada) {
+    document.getElementById("unidad").value = unidadGuardada;
+  } else {
+    const unidadGlobal = localStorage.getItem("unidad");
+    if (unidadGlobal) {
+      document.getElementById("unidad").value = unidadGlobal;
+    }
+  }
+
+  renderEsperas();
+  actualizarModoAutomatico();
+}
+
+function finalizarViaje() {
+  localStorage.removeItem(viajeKey("llegada"));
+  localStorage.removeItem(viajeKey("salida"));
+  localStorage.removeItem(viajeKey("distancia"));
+  localStorage.removeItem(viajeKey("unidad"));
+  localStorage.removeItem(viajeKey("precioManual"));
+  localStorage.removeItem(viajeKey("esperaManual"));
+  localStorage.removeItem(viajeKey("descuento"));
+  localStorage.removeItem(viajeKey("esperas"));
+  localStorage.removeItem(viajeKey("esperaActiva"));
+
+  document.getElementById("llegada").value = "";
+  document.getElementById("salida").value = "";
+  document.getElementById("km").value = "";
+  document.getElementById("precioManual").value = "";
+  document.getElementById("esperaManual").value = "";
+  document.getElementById("descuento").value = "0";
+  document.getElementById("nombreParada").value = "";
+  document.getElementById("resultado").innerHTML = "";
+  datos = {};
+
+  const unidadGlobal = localStorage.getItem("unidad");
+  if (unidadGlobal) {
+    document.getElementById("unidad").value = unidadGlobal;
+  }
+
+  renderEsperas();
+  actualizarModoAutomatico();
+  alert("Viaje actual finalizado");
+}
+
+function finalizarTodos() {
+  for (let i = 1; i <= 3; i++) {
+    const campos = [
+      "llegada","salida","distancia","unidad",
+      "precioManual","esperaManual","descuento",
+      "esperas","esperaActiva"
+    ];
+    campos.forEach(campo => localStorage.removeItem(`viaje${i}_${campo}`));
+  }
+
+  document.getElementById("llegada").value = "";
+  document.getElementById("salida").value = "";
+  document.getElementById("km").value = "";
+  document.getElementById("precioManual").value = "";
+  document.getElementById("esperaManual").value = "";
+  document.getElementById("descuento").value = "0";
+  document.getElementById("nombreParada").value = "";
+  document.getElementById("resultado").innerHTML = "";
+  datos = {};
+
+  const unidadGlobal = localStorage.getItem("unidad");
+  if (unidadGlobal) {
+    document.getElementById("unidad").value = unidadGlobal;
+  }
+
+  renderEsperas();
+  actualizarModoAutomatico();
+  alert("Todos los viajes han sido finalizados");
+}
+
+function calcular() {
+  let distancia = Number(document.getElementById("km").value);
+  let unidad = document.getElementById("unidad").value;
+  let kmv = unidad === "mi" ? distancia * 1.609 : distancia;
+
+  let precioManualVal = Number(document.getElementById("precioManual").value);
+  let solo = document.getElementById("soloViaje").value === "si";
+  let madrugada = document.getElementById("activarMadrugada").value === "si";
+  let porc = Number(document.getElementById("porcMadrugada").value) || 0;
+  let desc = Number(document.getElementById("descuento").value) || 0;
+  let esperaManualHoras = Number(document.getElementById("esperaManual").value) || 0;
+
+  if (!kmv && !precioManualVal) {
+    alert("Ingrese kilómetros o precio");
+    return;
+  }
+
+  let viaje = precioManualVal > 0 ? precioManualVal : precioViaje(kmv);
+  let primeraEsperaMin = 0;
+  let paradasExtraMin = 0;
+  let totalMin = 0;
+  let cobrableMin = 0;
+  let espera = 0;
+  let detalleEsperas = obtenerEsperas();
+  let metodoUsado = "Sin espera";
+
+  if (!solo) {
+    primeraEsperaMin = calcularPrimeraEsperaDesdeHoras();
+    paradasExtraMin = sumarMinutosEsperas();
+    totalMin = primeraEsperaMin + paradasExtraMin;
+
+    if (totalMin > 0) {
+      if (primeraEsperaMin > 0 && paradasExtraMin > 0) {
+        metodoUsado = "Primera parada + adicionales";
+      } else if (primeraEsperaMin > 0) {
+        metodoUsado = "Primera parada";
+      } else if (paradasExtraMin > 0) {
+        metodoUsado = "Paradas adicionales";
+      }
+    } else if (esperaManualHoras > 0) {
+      totalMin = esperaManualHoras * 60;
+      metodoUsado = "Espera manual";
+    }
+
+    cobrableMin = Math.max(0, totalMin - 30);
+
+    if (cobrableMin > 0) {
+      espera = Math.ceil(cobrableMin / 60) * 2.5;
+    }
+  }
+
+  let recargo = madrugada ? (viaje + espera) * (porc / 100) : 0;
+  let sub = viaje + espera + recargo;
+  let descAdic = sub * (desc / 100);
+  let total = sub - descAdic;
+
+  datos = {
+    viaje,
+    espera,
+    total,
+    totalMin,
+    primeraEsperaMin,
+    paradasExtraMin,
+    cobrableMin,
+    recargo,
+    porc,
+    descAdic,
+    desc,
+    detalleEsperas,
+    viajeNumero: document.getElementById("viajeActivo").value,
+    solo,
+    metodoUsado,
+    unidad: document.getElementById("unidad").value,
+    distancia: document.getElementById("km").value || "",
+    fechaISO: new Date().toISOString(),
+    fechaTexto: new Date().toLocaleString("es-SV")
+  };
+
+  document.getElementById("resultado").innerHTML = `
+    <div class="row">
+      <span>Viaje</span>
+      <span>$${viaje.toFixed(2)}</span>
+    </div>
+    <div class="row">
+      <span>Método usado</span>
+      <span>${metodoUsado}</span>
+    </div>
+    <div class="row">
+      <span>Primera espera</span>
+      <span>${solo ? "Viaje sin espera" : minToText(primeraEsperaMin)}</span>
+    </div>
+    <div class="row">
+      <span>Paradas adicionales</span>
+      <span>${solo ? "Viaje sin espera" : minToText(paradasExtraMin)}</span>
+    </div>
+    <div class="row">
+      <span>Tiempo total espera</span>
+      <span>${solo ? "Viaje sin espera" : minToText(totalMin)}</span>
+    </div>
+    <div class="row">
+      <span>Espera</span>
+      <span>$${espera.toFixed(2)}</span>
+    </div>
+    ${madrugada ? `
+    <div class="row">
+      <span>Madrugada (${porc}%)</span>
+      <span>$${recargo.toFixed(2)}</span>
+    </div>` : ``}
+    <div class="row">
+      <span>Descuento</span>
+      <span>-$${descAdic.toFixed(2)}</span>
+    </div>
+    <div class="row total">
+      <span>Total</span>
+      <span>$${total.toFixed(2)}</span>
+    </div>
+  `;
+}
+
+function verRecibo() {
+  if (!datos.total && datos.total !== 0) {
+    alert("Primero calcule el total");
+    return;
+  }
+
+  document.getElementById("recibo").style.display = "block";
+  document.getElementById("fechaHora").innerText = new Date().toLocaleString();
+  document.getElementById("rViaje").innerText = "$" + datos.viaje.toFixed(2);
+  document.getElementById("rMetodo").innerText = datos.metodoUsado;
+  document.getElementById("rPrimeraEspera").innerText = datos.solo ? "Viaje sin espera" : minToText(datos.primeraEsperaMin);
+  document.getElementById("rParadasExtra").innerText = datos.solo ? "Viaje sin espera" : minToText(datos.paradasExtraMin);
+  document.getElementById("rTotalEspera").innerText = datos.solo ? "Viaje sin espera" : minToText(datos.totalMin);
+  document.getElementById("rCobrado").innerText = minToText(datos.cobrableMin);
+  document.getElementById("rEspera").innerText = "$" + datos.espera.toFixed(2);
+  document.getElementById("rDesc").innerText = `-${datos.desc}% ($${datos.descAdic.toFixed(2)})`;
+  document.getElementById("rTotal").innerText = "$" + datos.total.toFixed(2);
+
+  if (datos.recargo > 0) {
+    document.getElementById("rMadrugada").style.display = "flex";
+    document.getElementById("rMadrugadaVal").innerText = `${datos.porc}% ($${datos.recargo.toFixed(2)})`;
+  } else {
+    document.getElementById("rMadrugada").style.display = "none";
+  }
+
+  if (datos.detalleEsperas && datos.detalleEsperas.length > 0) {
+    document.getElementById("rDetalleEsperasWrap").style.display = "block";
+    document.getElementById("rDetalleEsperas").innerHTML = datos.detalleEsperas.map((item, i) => `
+      <div style="margin-bottom:8px;">
+        <strong>${i + 1}. ${item.nombre}</strong><br>
+        ${item.inicioTexto}<br>
+        ${item.finTexto}<br>
+        Tiempo: ${minToText(item.minutos)}
+      </div>
+    `).join("");
+  } else {
+    document.getElementById("rDetalleEsperasWrap").style.display = "none";
+    document.getElementById("rDetalleEsperas").innerHTML = "";
+  }
+}
+
+function cerrarRecibo() {
+  document.getElementById("recibo").style.display = "none";
+}
+
+function generarTextoDetalleEsperas() {
+  const lista = datos.detalleEsperas || [];
+  if (!lista.length) return "Sin detalle de paradas";
+
+  return lista.map((item, i) =>
+    `${i + 1}. ${item.nombre}
+${item.inicioTexto}
+${item.finTexto}
+Tiempo: ${minToText(item.minutos)}`
+  ).join("\n\n");
+}
+
+function enviarWhatsApp() {
+  if (!datos.total && datos.total !== 0) {
+    alert("Primero calcule el total");
+    return;
+  }
+
+  let f = new Date();
+  let fecha = f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`RECIBO
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Método usado
+${datos.metodoUsado}
+
+Primera espera
+${datos.solo ? "Viaje sin espera" : minToText(datos.primeraEsperaMin)}
+
+Paradas adicionales
+${datos.solo ? "Viaje sin espera" : minToText(datos.paradasExtraMin)}
+
+Tiempo total espera
+${datos.solo ? "Viaje sin espera" : minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Tiempo cobrado
+${minToText(datos.cobrableMin)}
+
+Espera cobrada
+$${datos.espera.toFixed(2)}
+
+${datos.detalleEsperas && datos.detalleEsperas.length ? `Detalle de esperas
+${generarTextoDetalleEsperas()}
+
+` : ``}Descuento adicional
+-${datos.desc}% ($${datos.descAdic.toFixed(2)})
+
+${datos.recargo > 0 ? `Tarifa madrugada
+${datos.porc}% ($${datos.recargo.toFixed(2)})
+
+` : ``}TOTAL
+$${datos.total.toFixed(2)}`;
+
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function enviarCotizacion() {
+  if (!datos.total && datos.total !== 0) {
+    alert("Primero calcule el total");
+    return;
+  }
+
+  let f = new Date();
+  let fecha = f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`COTIZACIÓN DE SERVICIO
+
+Hola, con gusto le comparto la cotización del viaje
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Método usado
+${datos.metodoUsado}
+
+Primera espera
+${datos.solo ? "Viaje sin espera" : minToText(datos.primeraEsperaMin)}
+
+Paradas adicionales
+${datos.solo ? "Viaje sin espera" : minToText(datos.paradasExtraMin)}
+
+Tiempo total espera
+${datos.solo ? "Viaje sin espera" : minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Tiempo estimado cobrado
+${minToText(datos.cobrableMin)}
+
+Tarifa de espera
+$2.50 por hora o fracción
+
+Espera estimada
+$${datos.espera.toFixed(2)}
+
+${datos.detalleEsperas && datos.detalleEsperas.length ? `Detalle de paradas
+${generarTextoDetalleEsperas()}
+
+` : ``}Total estimado
+$${datos.total.toFixed(2)}
+
+La espera se cobra por hora o fracción.
+El precio puede variar según el tiempo real.
+
+Rogelio Fuentes
+Transporte Privado 24/7`;
+
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function nuevo() {
+  localStorage.removeItem(viajeKey("llegada"));
+  localStorage.removeItem(viajeKey("salida"));
+  localStorage.removeItem(viajeKey("distancia"));
+  localStorage.removeItem(viajeKey("precioManual"));
+  localStorage.removeItem(viajeKey("esperaManual"));
+  localStorage.removeItem(viajeKey("descuento"));
+  localStorage.removeItem(viajeKey("esperas"));
+  localStorage.removeItem(viajeKey("esperaActiva"));
+
+  document.getElementById("llegada").value = "";
+  document.getElementById("salida").value = "";
+  document.getElementById("km").value = "";
+  document.getElementById("precioManual").value = "";
+  document.getElementById("esperaManual").value = "";
+  document.getElementById("descuento").value = 0;
+  document.getElementById("nombreParada").value = "";
+  document.getElementById("resultado").innerHTML = "";
+  datos = {};
+
+  renderEsperas();
+  actualizarModoAutomatico();
+}
+
+function sinDescuento() {
+  document.getElementById("descuento").value = 0;
+  calcular();
+}
+
+function obtenerHistorial() {
+  try {
+    return JSON.parse(localStorage.getItem("historialViajes") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function guardarHistorial(lista) {
+  localStorage.setItem("historialViajes", JSON.stringify(lista));
+}
+
+function obtenerNumeroViajeDelDia(fechaISO, historial) {
+  const fechaBase = soloFechaISO(fechaISO);
+  const viajesDelDia = historial.filter(item => soloFechaISO(item.fechaISO) === fechaBase);
+  return viajesDelDia.length + 1;
+}
+
+function guardarEnHistorial() {
+  if (!datos.total && datos.total !== 0) {
+    alert("Primero calcule el total");
+    return;
+  }
+
+  const historial = obtenerHistorial();
+  const ahoraISO = new Date().toISOString();
+  const numeroViajeDelDia = obtenerNumeroViajeDelDia(ahoraISO, historial);
+
+  const registro = {
+    id: Date.now(),
+    fechaISO: ahoraISO,
+    fechaSolo: formatearFechaSolo(ahoraISO),
+    numeroViajeDia: numeroViajeDelDia,
+    precioViaje: Number(datos.viaje),
+    totalCobrado: Number(datos.total)
+  };
+
+  historial.push(registro);
+  guardarHistorial(historial);
+  renderHistorial();
+
+  alert("Viaje guardado en historial");
+}
+
+function obtenerHistorialFiltrado() {
+  const historial = obtenerHistorial();
+
+  if (!filtroFechaActual) {
+    return historial.slice().sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+  }
+
+  return historial
+    .filter(item => soloFechaISO(item.fechaISO) === filtroFechaActual)
+    .sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+}
+
+function actualizarEstadoHistorial() {
+  const estado = document.getElementById("estadoHistorial");
+
+  if (filtroFechaActual) {
+    estado.textContent = `Buscando fecha: ${filtroFechaActual}`;
+  } else {
+    estado.textContent = "Mostrando todos los registros";
+  }
+}
+
+function renderHistorial() {
+  const listaFiltrada = obtenerHistorialFiltrado();
+  const contenedor = document.getElementById("listaHistorial");
+
+  actualizarEstadoHistorial();
+
+  if (!listaFiltrada.length) {
+    contenedor.innerHTML = `<div class="historial-item">No hay viajes guardados</div>`;
+    return;
+  }
+
+  let total = 0;
+  let html = "";
+
+  listaFiltrada.forEach((item, index) => {
+    total += Number(item.totalCobrado) || 0;
+
+    html += `
+      <div class="historial-item">
+        <strong>${index + 1}. ${item.fechaSolo}</strong><br>
+        Numero de viaje: ${item.numeroViajeDia}<br>
+        Precio del viaje: $${Number(item.precioViaje).toFixed(2)}<br>
+        Total cobrado: $${Number(item.totalCobrado).toFixed(2)}
+
+        <div class="historial-acciones">
+          <button class="secondary" onclick="descargarPDFRegistroPorId(${item.id})">PDF</button>
+          <button class="danger" onclick="eliminarRegistroHistorial(${item.id})">Eliminar</button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `<div class="historial-resumen">Total de viajes: ${listaFiltrada.length} · Total general: $${total.toFixed(2)}</div>`;
+  contenedor.innerHTML = html;
+}
+
+function buscarPorFecha() {
+  const fecha = document.getElementById("filtroFecha").value;
+
+  if (!fecha) {
+    alert("Seleccione una fecha para buscar");
+    return;
+  }
+
+  filtroFechaActual = fecha;
+  renderHistorial();
+}
+
+function mostrarTodosHistorial() {
+  filtroFechaActual = "";
+  document.getElementById("filtroFecha").value = "";
+  document.getElementById("estadoHistorial").textContent = "Mostrando todos los registros";
+  renderHistorial();
+}
+
+function limpiarBusquedaHistorial() {
+  document.getElementById("filtroFecha").value = "";
+  filtroFechaActual = "";
+  document.getElementById("estadoHistorial").textContent = "";
+  document.getElementById("listaHistorial").innerHTML = "";
+}
+
+function generarPDFRegistro(registro) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("REGISTRO DE VIAJE", 20, 20);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text("Rogelio Fuentes - Transporte Privado 24/7", 20, 32);
+
+  doc.text(`Fecha: ${registro.fechaSolo}`, 20, 48);
+  doc.text(`Numero de viaje: ${registro.numeroViajeDia}`, 20, 60);
+  doc.text(`Precio del viaje: $${Number(registro.precioViaje).toFixed(2)}`, 20, 72);
+  doc.text(`Total cobrado: $${Number(registro.totalCobrado).toFixed(2)}`, 20, 84);
+
+  doc.save(`registro_viaje_${registro.fechaSolo.replace(/\//g, "-")}.pdf`);
+}
+
+function generarPDFHistorialGlobal(lista) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("HISTORIAL DE VIAJES", 20, 20);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text("Rogelio Fuentes - Transporte Privado 24/7", 20, 32);
+
+  let y = 48;
+  let totalGeneral = 0;
+
+  lista.forEach((item, index) => {
+    totalGeneral += Number(item.totalCobrado) || 0;
+
+    if (y > 250) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setFont("helvetica", "bold");
+    doc.text(`${index + 1}. ${item.fechaSolo}`, 20, y);
+    y += 10;
+
+    doc.setFont("helvetica", "normal");
+    doc.text(`Numero de viaje: ${item.numeroViajeDia}`, 20, y);
+    y += 10;
+    doc.text(`Precio del viaje: $${Number(item.precioViaje).toFixed(2)}`, 20, y);
+    y += 10;
+    doc.text(`Total cobrado: $${Number(item.totalCobrado).toFixed(2)}`, 20, y);
+    y += 14;
+  });
+
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.text(`Total general: $${totalGeneral.toFixed(2)}`, 20, y);
+  y += 10;
+  doc.text(`Total de viajes: ${lista.length}`, 20, y);
+
+  doc.save("historial_de_viajes.pdf");
+}
+
+function descargarPDFRegistroPorId(id) {
+  const historial = obtenerHistorial();
+  const registro = historial.find(item => item.id === id);
+
+  if (!registro) {
+    alert("No se encontró el registro");
+    return;
+  }
+
+  generarPDFRegistro(registro);
+}
+
+function eliminarRegistroHistorial(id) {
+  if (!confirm("¿Desea eliminar este registro del historial?")) return;
+
+  let historial = obtenerHistorial();
+  historial = historial.filter(item => item.id !== id);
+
+  historial.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+
+  const contadores = {};
+  historial = historial.map(item => {
+    const fecha = soloFechaISO(item.fechaISO);
+    if (!contadores[fecha]) contadores[fecha] = 0;
+    contadores[fecha] += 1;
+
+    return {
+      ...item,
+      numeroViajeDia: contadores[fecha],
+      fechaSolo: formatearFechaSolo(item.fechaISO)
+    };
+  });
+
+  guardarHistorial(historial);
+  renderHistorial();
+
+  alert("Registro eliminado");
+}
+
+function descargarPDFHistorialActual() {
+  const lista = obtenerHistorialFiltrado();
+
+  if (!lista.length) {
+    alert("No hay registros para generar PDF");
+    return;
+  }
+
+  if (filtroFechaActual) {
+    if (lista.length === 1) {
+      generarPDFRegistro(lista[0]);
+    } else {
+      generarPDFHistorialGlobal(lista);
+    }
+  } else {
+    generarPDFHistorialGlobal(lista);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  restaurarOpciones();
+  cargarViajeActual();
+  renderEsperas();
+  actualizarModoAutomatico();
+  renderHistorial();
+
+  document.getElementById("unidad").addEventListener("change", () => {
+    guardarOpciones();
+    guardarViajeActual();
+    actualizarModoAutomatico();
+  });
+
+  document.getElementById("soloViaje").addEventListener("change", () => {
+    guardarOpciones();
+    guardarViajeActual();
+    actualizarModoAutomatico();
+  });
+
+  document.getElementById("activarMadrugada").addEventListener("change", guardarOpciones);
+  document.getElementById("porcMadrugada").addEventListener("input", guardarOpciones);
+
+  document.getElementById("viajeActivo").addEventListener("change", () => {
+    cargarViajeActual();
+  });
+
+  ["km","precioManual","llegada","salida","esperaManual","descuento"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      guardarViajeActual();
+      actualizarModoAutomatico();
+    });
+  });
+
+  document.getElementById("nombreParada").addEventListener("input", function() {
+    this.value = capitalizar(this.value);
+  });
+
+  setInterval(() => {
+    renderEsperas();
+  }, 1000);
+});
+</script>
+
+</body>
+</html>
