@@ -237,6 +237,9 @@ button.success{background:#1f7a3f;color:#fff;}
     <option value="3">Viaje 3</option>
   </select>
 
+  <label>Lugar del viaje</label>
+  <input type="text" id="lugarViaje" placeholder="Ej: San Miguel">
+
   <div class="section">
     <label>Distancia del viaje</label>
     <select id="unidad">
@@ -429,9 +432,14 @@ function minToText(min){
 
 function capitalizar(texto) {
   if (!texto) return "";
-  texto = texto.trim();
-  if (!texto) return "";
-  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+  
+  return texto
+    .trim()
+    .toLowerCase()
+    .split(" ")
+    .filter(palabra => palabra.length > 0)
+    .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+    .join(" ");
 }
 
 function formatearFechaHora(fecha, tipo = "") {
@@ -446,9 +454,22 @@ function formatearFechaHora(fecha, tipo = "") {
   return `${tipo.charAt(0).toUpperCase() + tipo.slice(1)}: ${hora} - ${fechaTexto}`;
 }
 
-function formatearFechaSolo(fechaISO) {
+function formatearFechaLarga(fechaISO) {
   const fecha = new Date(fechaISO);
-  return fecha.toLocaleDateString("es-SV");
+  const meses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  const dia = fecha.getDate();
+  const mes = meses[fecha.getMonth()];
+  const anio = fecha.getFullYear();
+
+  return `${dia} ${mes} ${anio}`;
+}
+
+function formatearFechaSolo(fechaISO) {
+  return formatearFechaLarga(fechaISO);
 }
 
 function soloFechaISO(fechaISO) {
@@ -689,6 +710,7 @@ function guardarLlegada() {
   localStorage.setItem(viajeKey("precioManual"), document.getElementById("precioManual").value || "");
   localStorage.setItem(viajeKey("esperaManual"), document.getElementById("esperaManual").value || "");
   localStorage.setItem(viajeKey("descuento"), document.getElementById("descuento").value || "0");
+  localStorage.setItem(viajeKey("lugar"), document.getElementById("lugarViaje").value.trim() || "");
 
   actualizarModoAutomatico();
   alert("Datos del viaje guardados correctamente");
@@ -702,6 +724,7 @@ function guardarViajeActual() {
   localStorage.setItem(viajeKey("precioManual"), document.getElementById("precioManual").value || "");
   localStorage.setItem(viajeKey("esperaManual"), document.getElementById("esperaManual").value || "");
   localStorage.setItem(viajeKey("descuento"), document.getElementById("descuento").value || "0");
+  localStorage.setItem(viajeKey("lugar"), document.getElementById("lugarViaje").value.trim() || "");
 }
 
 function cargarViajeActual() {
@@ -711,6 +734,7 @@ function cargarViajeActual() {
   document.getElementById("precioManual").value = localStorage.getItem(viajeKey("precioManual")) || "";
   document.getElementById("esperaManual").value = localStorage.getItem(viajeKey("esperaManual")) || "";
   document.getElementById("descuento").value = localStorage.getItem(viajeKey("descuento")) || "0";
+  document.getElementById("lugarViaje").value = localStorage.getItem(viajeKey("lugar")) || "";
 
   const unidadGuardada = localStorage.getItem(viajeKey("unidad"));
   if (unidadGuardada) {
@@ -736,6 +760,7 @@ function finalizarViaje() {
   localStorage.removeItem(viajeKey("descuento"));
   localStorage.removeItem(viajeKey("esperas"));
   localStorage.removeItem(viajeKey("esperaActiva"));
+  localStorage.removeItem(viajeKey("lugar"));
 
   document.getElementById("llegada").value = "";
   document.getElementById("salida").value = "";
@@ -744,6 +769,7 @@ function finalizarViaje() {
   document.getElementById("esperaManual").value = "";
   document.getElementById("descuento").value = "0";
   document.getElementById("nombreParada").value = "";
+  document.getElementById("lugarViaje").value = "";
   document.getElementById("resultado").innerHTML = "";
   datos = {};
 
@@ -762,7 +788,7 @@ function finalizarTodos() {
     const campos = [
       "llegada","salida","distancia","unidad",
       "precioManual","esperaManual","descuento",
-      "esperas","esperaActiva"
+      "esperas","esperaActiva","lugar"
     ];
     campos.forEach(campo => localStorage.removeItem(`viaje${i}_${campo}`));
   }
@@ -774,6 +800,7 @@ function finalizarTodos() {
   document.getElementById("esperaManual").value = "";
   document.getElementById("descuento").value = "0";
   document.getElementById("nombreParada").value = "";
+  document.getElementById("lugarViaje").value = "";
   document.getElementById("resultado").innerHTML = "";
   datos = {};
 
@@ -1089,6 +1116,7 @@ function nuevo() {
   localStorage.removeItem(viajeKey("descuento"));
   localStorage.removeItem(viajeKey("esperas"));
   localStorage.removeItem(viajeKey("esperaActiva"));
+  localStorage.removeItem(viajeKey("lugar"));
 
   document.getElementById("llegada").value = "";
   document.getElementById("salida").value = "";
@@ -1097,6 +1125,7 @@ function nuevo() {
   document.getElementById("esperaManual").value = "";
   document.getElementById("descuento").value = 0;
   document.getElementById("nombreParada").value = "";
+  document.getElementById("lugarViaje").value = "";
   document.getElementById("resultado").innerHTML = "";
   datos = {};
 
@@ -1136,13 +1165,15 @@ function guardarEnHistorial() {
   const historial = obtenerHistorial();
   const ahoraISO = new Date().toISOString();
   const numeroViajeDelDia = obtenerNumeroViajeDelDia(ahoraISO, historial);
+  const lugar = document.getElementById("lugarViaje").value.trim() || "No especificado";
 
   const registro = {
     id: Date.now(),
     fechaISO: ahoraISO,
-    fechaSolo: formatearFechaSolo(ahoraISO),
+    fechaSolo: formatearFechaLarga(ahoraISO),
     numeroViajeDia: numeroViajeDelDia,
-    precioViaje: Number(datos.viaje),
+    lugar: lugar,
+    precioViaje: Number(datos.total),
     totalCobrado: Number(datos.total)
   };
 
@@ -1196,6 +1227,7 @@ function renderHistorial() {
       <div class="historial-item">
         <strong>${index + 1}. ${item.fechaSolo}</strong><br>
         Numero de viaje: ${item.numeroViajeDia}<br>
+        Lugar: ${item.lugar || "No especificado"}<br>
         Precio del viaje: $${Number(item.precioViaje).toFixed(2)}<br>
         Total cobrado: $${Number(item.totalCobrado).toFixed(2)}
 
@@ -1251,10 +1283,12 @@ function generarPDFRegistro(registro) {
 
   doc.text(`Fecha: ${registro.fechaSolo}`, 20, 48);
   doc.text(`Numero de viaje: ${registro.numeroViajeDia}`, 20, 60);
-  doc.text(`Precio del viaje: $${Number(registro.precioViaje).toFixed(2)}`, 20, 72);
-  doc.text(`Total cobrado: $${Number(registro.totalCobrado).toFixed(2)}`, 20, 84);
+  doc.text(`Lugar: ${registro.lugar || "No especificado"}`, 20, 72);
+  doc.text(`Precio del viaje: $${Number(registro.precioViaje).toFixed(2)}`, 20, 84);
+  doc.text(`Total cobrado: $${Number(registro.totalCobrado).toFixed(2)}`, 20, 96);
 
-  doc.save(`registro_viaje_${registro.fechaSolo.replace(/\//g, "-")}.pdf`);
+  const fechaArchivo = soloFechaISO(registro.fechaISO);
+  doc.save(`registro_viaje_${fechaArchivo}.pdf`);
 }
 
 function generarPDFHistorialGlobal(lista) {
@@ -1286,6 +1320,8 @@ function generarPDFHistorialGlobal(lista) {
 
     doc.setFont("helvetica", "normal");
     doc.text(`Numero de viaje: ${item.numeroViajeDia}`, 20, y);
+    y += 10;
+    doc.text(`Lugar: ${item.lugar || "No especificado"}`, 20, y);
     y += 10;
     doc.text(`Precio del viaje: $${Number(item.precioViaje).toFixed(2)}`, 20, y);
     y += 10;
@@ -1390,7 +1426,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarViajeActual();
   });
 
-  ["km","precioManual","llegada","salida","esperaManual","descuento"].forEach(id => {
+  ["km","precioManual","llegada","salida","esperaManual","descuento","lugarViaje"].forEach(id => {
     document.getElementById(id).addEventListener("input", () => {
       guardarViajeActual();
       actualizarModoAutomatico();
@@ -1400,7 +1436,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("nombreParada").addEventListener("input", function() {
     this.value = capitalizar(this.value);
   });
-
+document.getElementById("lugarViaje").addEventListener("blur", function() {
+  this.value = capitalizar(this.value);
+  guardarViajeActual();
+});
   setInterval(() => {
     renderEsperas();
   }, 1000);
