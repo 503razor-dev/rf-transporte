@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1409,3 +1410,572 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rogelio Fuentes Transporte Privado</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#0f0f0f;
+  color:#fff;
+}
+.card{
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+  width:360px;
+  margin:20px auto;
+  box-shadow:0 0 25px rgba(0,0,0,.7);
+}
+.header{text-align:center;margin-bottom:12px;}
+.header .name{color:#f5c542;font-size:18px;font-weight:600;}
+.header .desc{font-size:12px;color:#ccc;}
+.header .title{color:#f5c542;font-size:16px;font-weight:600;margin-top:6px;}
+.header .rule{font-size:13px;color:#ccc;}
+
+.section{margin-top:14px;padding-top:10px;border-top:1px solid #333;}
+label{font-size:13px;color:#ccc;}
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  font-size:15px;
+}
+input{background:#2a2a2a;color:#fff;}
+button{background:#f5c542;color:#000;font-weight:bold;}
+button.secondary{background:#333;color:#fff;}
+.toggle{display:flex;gap:8px;font-size:13px;}
+
+.result{
+  margin-top:14px;
+  background:#111;
+  padding:12px;
+  border-radius:8px;
+  font-size:14px;
+}
+.result .row{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+
+.result .row span:last-child{
+  font-weight:bold;
+}
+
+.result .total{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid #333;
+  color:#f5c542;
+  font-size:16px;
+}
+
+#recibo{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0f0f0f;
+}
+.recibo-box{
+  max-width:360px;
+  margin:20px auto;
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:16px;
+}
+.recibo-box h2{text-align:center;color:#f5c542;}
+.recibo-box hr{border:0;border-top:1px dashed #444;margin:10px 0;}
+.recibo-box .line{display:flex;justify-content:space-between;font-size:14px;}
+.recibo-box .total{font-size:18px;font-weight:bold;color:#f5c542;}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="name">Rogelio Fuentes</div>
+    <div class="desc">Motorista · Transporte Privado 24/7</div>
+    <div class="title">Cálculo de Viaje</div>
+    <div class="rule">30 min gratis</div>
+    <div class="rule">$2.50 por hora o fracción</div>
+  </div>
+<label>Viaje activo</label>
+<select id="viajeActivo" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="1">Viaje 1</option>
+  <option value="2">Viaje 2</option>
+  <option value="3">Viaje 3</option>
+</select>
+
+  <div class="section">
+    <label>Distancia del viaje</label>
+
+<select id="unidad" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="km">Kilómetros (km)</option>
+  <option value="mi">Millas (mi)</option>
+</select>
+
+<input type="number" id="km" placeholder="Ingrese la distancia">
+
+    <label>Precio del viaje ($) (opcional)</label>
+    <input type="number" id="precioManual">
+  </div>
+
+  <div class="section">
+    <label>Tipo de servicio</label>
+<select id="soloViaje" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="no">Viaje con espera</option>
+  <option value="si">Solo viaje (sin espera)</option>
+</select>
+
+
+<label>Tarifa de madrugada</label>
+<select id="activarMadrugada" style="width:100%;padding:10px;border-radius:8px;background:#2a2a2a;color:#fff;border:none;">
+  <option value="no">No aplicar</option>
+  <option value="si">Aplicar madrugada 🌙</option>
+</select>
+
+
+    <label>Porcentaje madrugada (%)</label>
+    <input type="number" id="porcMadrugada" value="20">
+
+    <label>Hora llegada</label>
+    <input type="time" id="llegada">
+    <label>Hora salida</label>
+    <input type="time" id="salida">
+    <button class="secondary" onclick="guardarLlegada()">Guardar llegada</button>
+<button class="secondary" onclick="finalizarViaje()">Finalizar viaje</button>
+<button class="secondary" onclick="finalizarTodos()">Finalizar TODOS los viajes</button>
+
+  </div>
+<label>Horas de espera (manual)</label>
+<input type="number" id="esperaManual" step="0.1" placeholder="Ej: 1.5">
+
+  <div class="section">
+    <label>Descuento adicional (%)</label>
+    <input type="number" id="descuento" value="0">
+    <button class="secondary" onclick="sinDescuento()">Sin descuento</button>
+  </div>
+
+  <button onclick="calcular()">Calcular total</button>
+  <button class="secondary" onclick="nuevo()">Nuevo cálculo</button>
+  <button class="secondary" onclick="verRecibo()">Ver recibo</button>
+  <button class="secondary" onclick="enviarCotizacion()">Enviar cotización</button>
+
+  <div class="result" id="resultado"></div>
+</div>
+
+<!-- RECIBO -->
+<div id="recibo">
+  <div class="recibo-box">
+    <h2>RECIBO</h2>
+    <div style="text-align:center;font-size:13px;">
+      Rogelio Fuentes<br>Transporte Privado 24/7
+    </div>
+    <hr>
+    <div id="fechaHora" style="text-align:center;font-size:13px;"></div>
+    <hr>
+
+    <div class="line"><span>Viaje</span><span id="rViaje"></span></div>
+    <div class="line"><span>Tiempo total espera</span><span id="rTotalEspera"></span></div>
+    <div class="line"><span>Cortesía (30 min)</span><span>30 min</span></div>
+    <div class="line"><span>Descuento por cortesía</span><span>-$2.50</span></div>
+    <div class="line"><span>Tiempo cobrado</span><span id="rCobrado"></span></div>
+    <div class="line"><span>Espera cobrada</span><span id="rEspera"></span></div>
+
+    <div class="line" id="rMadrugada" style="display:none;">
+      <span>Tarifa madrugada</span>
+      <span id="rMadrugadaVal"></span>
+    </div>
+
+    <div class="line"><span>Descuento adicional</span><span id="rDesc"></span></div>
+
+    <hr>
+    <div class="line total"><span>Total</span><span id="rTotal"></span></div>
+
+    <button class="secondary" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button class="secondary" onclick="cerrarRecibo()">Cerrar recibo</button>
+  </div>
+</div>
+
+
+<script>
+let datos = {};
+
+function precioViaje(km) {
+  if (km <= 30) return 10;
+  if (km <= 60) return 20;
+
+  if (km <= 90) return 30;
+  if (km <= 120) return 40;
+  if (km <= 150) return 50;
+  if (km <= 180) return 60;
+  if (km <= 210) return 70;
+  if (km <= 240) return 80;
+
+  if (km <= 270) return 90;
+  if (km <= 300) return 100;
+  if (km <= 330) return 115;
+  if (km <= 360) return 130;
+  if (km <= 390) return 145;
+  if (km <= 420) return 160;
+  if (km <= 450) return 175;
+  if (km <= 480) return 190;
+  if (km <= 510) return 205;
+  if (km <= 540) return 235;
+  if (km <= 600) return 250;
+
+  return 0;
+}
+
+
+
+function minToText(min){
+  let h=Math.floor(min/60);
+  let m=min%60;
+  return `${h} h ${m} min`;
+}
+
+function calcular(){
+let distancia = Number(km.value);
+let unidad = document.getElementById("unidad").value;
+
+// Convertir millas a kilómetros si aplica
+let kmv = unidad === "mi" ? distancia * 1.609 : distancia;
+
+  let precioManualVal=Number(precioManual.value);
+let solo = soloViaje.value === "si";
+
+let madrugada = activarMadrugada.value === "si";
+
+  let porc=Number(porcMadrugada.value)||0;
+  let desc=Number(descuento.value)||0;
+
+  if(!kmv && !precioManualVal){
+    alert("Ingrese kilómetros o precio");
+    return;
+  }
+
+  let viaje=precioManualVal>0?precioManualVal:precioViaje(kmv);
+  
+  
+  let totalMin=0,cobrableMin=0,espera=0;
+let esperaManualHoras = Number(esperaManual.value);
+
+if(!solo){
+
+  // 👉 SI HAY ESPERA MANUAL
+  if(esperaManualHoras > 0){
+    totalMin = esperaManualHoras * 60;
+    cobrableMin = Math.max(0, totalMin - 30);
+    espera = Math.ceil(cobrableMin / 60) * 2.5;
+  }
+
+  // 👉 SI NO HAY MANUAL, USA HORAS
+  else if(llegada.value && salida.value){
+    let [h1,m1]=llegada.value.split(":").map(Number);
+    let [h2,m2]=salida.value.split(":").map(Number);
+    totalMin=(h2*60+m2)-(h1*60+m1);
+    cobrableMin=Math.max(0,totalMin-30);
+    if(cobrableMin>0) espera=Math.ceil(cobrableMin/60)*2.5;
+  }
+}
+
+
+  let recargo=madrugada?(viaje+espera)*(porc/100):0;
+  let sub=viaje+espera+recargo;
+  let descAdic=sub*(desc/100);
+  let total=sub-descAdic;
+
+  datos={viaje,espera,total,totalMin,cobrableMin,recargo,porc,descAdic,desc};
+
+  resultado.innerHTML = `
+  <div class="row">
+    <span>Viaje</span>
+    <span>$${viaje.toFixed(2)}</span>
+  </div>
+  <div class="row">
+    <span>Espera</span>
+    <span>$${espera.toFixed(2)}</span>
+  </div>
+  <div class="row">
+    <span>Descuento</span>
+    <span>-$${descAdic.toFixed(2)}</span>
+  </div>
+  <div class="row total">
+    <span>Total</span>
+    <span>$${total.toFixed(2)}</span>
+  </div>
+`;
+
+}
+
+function verRecibo(){
+let solo = soloViaje.checked;
+  recibo.style.display="block";
+  fechaHora.innerText=new Date().toLocaleString();
+  rViaje.innerText="$"+datos.viaje.toFixed(2);
+rTotalEspera.innerText = solo ? "Viaje sin espera" : minToText(datos.totalMin);
+
+  rCobrado.innerText=minToText(datos.cobrableMin);
+  rEspera.innerText="$"+datos.espera.toFixed(2);
+  rDesc.innerText=`-${datos.desc}% ($${datos.descAdic.toFixed(2)})`;
+  rTotal.innerText="$"+datos.total.toFixed(2);
+
+  if(datos.recargo>0){
+    rMadrugada.style.display="flex";
+    rMadrugadaVal.innerText=`${datos.porc}% ($${datos.recargo.toFixed(2)})`;
+  }else{
+    rMadrugada.style.display="none";
+  }
+}
+
+function cerrarRecibo(){recibo.style.display="none";}
+
+function enviarWhatsApp(){
+  let f = new Date();
+  let fecha =
+    f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`RECIBO
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Tiempo total espera
+${minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Descuento por cortesía
+-$2.50
+
+Tiempo cobrado
+${minToText(datos.cobrableMin)}
+
+Espera cobrada
+$${datos.espera.toFixed(2)}
+
+Descuento adicional
+-${datos.desc}% ($${datos.descAdic.toFixed(2)})
+
+TOTAL
+$${datos.total.toFixed(2)}`;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+function enviarCotizacion(){
+  let f = new Date();
+  let fecha =
+    f.toLocaleDateString() + " " + f.toLocaleTimeString();
+
+  let msg =
+`COTIZACIÓN DE SERVICIO
+
+Hola, con gusto le comparto la cotización del viaje
+
+Rogelio Fuentes
+Transporte Privado 24/7
+
+${fecha}
+
+Viaje
+$${datos.viaje.toFixed(2)}
+
+Tiempo total espera
+${minToText(datos.totalMin)}
+
+Cortesía (30 min)
+30 min
+
+Tiempo estimado cobrado
+${minToText(datos.cobrableMin)}
+
+Tarifa de espera
+$2.50 por hora o fracción
+
+Espera estimada
+$${datos.espera.toFixed(2)}
+
+
+Total estimado
+$${datos.total.toFixed(2)}
+
+La espera se cobra por hora o fracción.
+El precio puede variar según el tiempo real.
+
+Rogelio Fuentes
+Transporte Privado 24/7`;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+
+function nuevo(){
+  km.value="";precioManual.value="";llegada.value="";
+  salida.value="";descuento.value=0;resultado.innerHTML="";
+}
+function sinDescuento(){descuento.value=0;calcular();}
+// ===============================
+// GUARDAR OPCIONES SELECCIONADAS
+// ===============================
+
+// Guardar cambios automáticamente
+function guardarOpciones() {
+  localStorage.setItem("unidad", document.getElementById("unidad")?.value);
+  localStorage.setItem("soloViaje", document.getElementById("soloViaje")?.value);
+  localStorage.setItem("madrugada", document.getElementById("activarMadrugada")?.value);
+}
+
+// Restaurar opciones al abrir la app
+function restaurarOpciones() {
+  const unidad = localStorage.getItem("unidad");
+  const solo = localStorage.getItem("soloViaje");
+  const madrugada = localStorage.getItem("madrugada");
+
+  if (unidad && document.getElementById("unidad")) {
+    document.getElementById("unidad").value = unidad;
+  }
+
+  if (solo && document.getElementById("soloViaje")) {
+    document.getElementById("soloViaje").value = solo;
+  }
+
+  if (madrugada && document.getElementById("activarMadrugada")) {
+    document.getElementById("activarMadrugada").value = madrugada;
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", restaurarOpciones);
+
+// Detectar cambios
+document.getElementById("unidad")?.addEventListener("change", guardarOpciones);
+document.getElementById("soloViaje")?.addEventListener("change", guardarOpciones);
+document.getElementById("activarMadrugada")?.addEventListener("change", guardarOpciones);
+// ===============================
+// GUARDAR Y RETOMAR VIAJE
+// ===============================
+
+function guardarLlegada() {
+  if (!llegada.value) {
+    alert("Ingrese la hora de llegada");
+    return;
+  }
+
+  // Guardar SOLO horas
+  localStorage.setItem("horaLlegada", llegada.value);
+
+  if (salida.value) {
+    localStorage.setItem("horaSalida", salida.value);
+  }
+
+  alert("Horas guardadas correctamente");
+}
+
+
+
+
+// Restaurar llegada si existe
+document.addEventListener("DOMContentLoaded", () => {
+  const llegadaGuardada = localStorage.getItem("llegadaGuardada");
+  const distanciaGuardada = localStorage.getItem("distanciaGuardada");
+  const unidadGuardada = localStorage.getItem("unidadGuardada");
+
+  if (llegadaGuardada) {
+    llegada.value = llegadaGuardada;
+  }
+
+  if (distanciaGuardada) {
+    km.value = distanciaGuardada;
+  }
+
+  if (unidadGuardada && document.getElementById("unidad")) {
+    document.getElementById("unidad").value = unidadGuardada;
+  }
+});
+
+function finalizarViaje() {
+  localStorage.removeItem("horaLlegada");
+  localStorage.removeItem("horaSalida");
+
+  llegada.value = "";
+  salida.value = "";
+
+  alert("Horas borradas");
+}
+
+// ===============================
+// MANEJO DE VIAJES MÚLTIPLES (1–3)
+// ===============================
+
+function viajeKey(nombre) {
+  const v = document.getElementById("viajeActivo").value;
+  return `viaje${v}_${nombre}`;
+}
+
+function guardarViajeActual() {
+  localStorage.setItem(viajeKey("llegada"), llegada.value);
+  localStorage.setItem(viajeKey("distancia"), km.value);
+  localStorage.setItem(viajeKey("unidad"), document.getElementById("unidad").value);
+}
+
+function cargarViajeActual() {
+  llegada.value = localStorage.getItem(viajeKey("llegada")) || "";
+  km.value = localStorage.getItem(viajeKey("distancia")) || "";
+  const u = localStorage.getItem(viajeKey("unidad"));
+  if (u) document.getElementById("unidad").value = u;
+}
+document.getElementById("viajeActivo").addEventListener("change", () => {
+  cargarViajeActual();
+});
+
+function finalizarTodos() {
+  for (let i = 1; i <= 3; i++) {
+    localStorage.removeItem(`viaje${i}_llegada`);
+    localStorage.removeItem(`viaje${i}_distancia`);
+    localStorage.removeItem(`viaje${i}_unidad`);
+  }
+
+  llegada.value = "";
+  salida.value = "";
+  km.value = "";
+
+  alert("Todos los viajes han sido finalizados");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const hLlegada = localStorage.getItem("horaLlegada");
+  const hSalida = localStorage.getItem("horaSalida");
+
+  if (hLlegada) llegada.value = hLlegada;
+  if (hSalida) salida.value = hSalida;
+});
+
+</script>
+
+</body>
+</html>
+>>>>>>> 191fdecf545ab2292a70b6cab36d02c7fa81c8fe
