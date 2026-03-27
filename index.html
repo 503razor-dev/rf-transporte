@@ -335,8 +335,11 @@ button.success{background:#1f7a3f;color:#fff;}
     <label>Buscar por fecha</label>
     <input type="date" id="filtroFecha">
 
+    <label>Buscar por mes</label>
+    <input type="month" id="filtroMes">
+
     <div class="botones-grid-3">
-      <button class="secondary" onclick="buscarPorFecha()">Buscar</button>
+      <button class="secondary" onclick="buscarHistorial()">Buscar</button>
       <button class="secondary" onclick="mostrarTodosHistorial()">Mostrar todos</button>
       <button class="secondary" onclick="limpiarBusquedaHistorial()">Limpiar búsqueda</button>
     </div>
@@ -399,6 +402,7 @@ button.success{background:#1f7a3f;color:#fff;}
 <script>
 let datos = {};
 let filtroFechaActual = "";
+let filtroMesActual = "";
 
 function precioViaje(km) {
   if (km <= 30) return 10;
@@ -478,6 +482,13 @@ function soloFechaISO(fechaISO) {
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+function soloMesISO(fechaISO) {
+  const fecha = new Date(fechaISO);
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
 }
 
 function viajeKey(nombre) {
@@ -1187,13 +1198,19 @@ function guardarEnHistorial() {
 function obtenerHistorialFiltrado() {
   const historial = obtenerHistorial();
 
-  if (!filtroFechaActual) {
-    return historial.slice().sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+  if (filtroFechaActual) {
+    return historial
+      .filter(item => soloFechaISO(item.fechaISO) === filtroFechaActual)
+      .sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
   }
 
-  return historial
-    .filter(item => soloFechaISO(item.fechaISO) === filtroFechaActual)
-    .sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+  if (filtroMesActual) {
+    return historial
+      .filter(item => soloMesISO(item.fechaISO) === filtroMesActual)
+      .sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+  }
+
+  return historial.slice().sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
 }
 
 function actualizarEstadoHistorial() {
@@ -1201,6 +1218,8 @@ function actualizarEstadoHistorial() {
 
   if (filtroFechaActual) {
     estado.textContent = `Buscando fecha: ${filtroFechaActual}`;
+  } else if (filtroMesActual) {
+    estado.textContent = `Buscando mes: ${filtroMesActual}`;
   } else {
     estado.textContent = "Mostrando todos los registros";
   }
@@ -1243,30 +1262,43 @@ function renderHistorial() {
   contenedor.innerHTML = html;
 }
 
-function buscarPorFecha() {
+function buscarHistorial() {
   const fecha = document.getElementById("filtroFecha").value;
+  const mes = document.getElementById("filtroMes").value;
 
-  if (!fecha) {
-    alert("Seleccione una fecha para buscar");
+  if (fecha) {
+    filtroFechaActual = fecha;
+    filtroMesActual = "";
+    renderHistorial();
     return;
   }
 
-  filtroFechaActual = fecha;
-  renderHistorial();
+  if (mes) {
+    filtroMesActual = mes;
+    filtroFechaActual = "";
+    renderHistorial();
+    return;
+  }
+
+  alert("Seleccione una fecha o un mes para buscar");
 }
 
 function mostrarTodosHistorial() {
   filtroFechaActual = "";
+  filtroMesActual = "";
   document.getElementById("filtroFecha").value = "";
+  document.getElementById("filtroMes").value = "";
   document.getElementById("estadoHistorial").textContent = "Mostrando todos los registros";
   renderHistorial();
 }
 
 function limpiarBusquedaHistorial() {
   document.getElementById("filtroFecha").value = "";
+  document.getElementById("filtroMes").value = "";
   filtroFechaActual = "";
-  document.getElementById("estadoHistorial").textContent = "";
-  document.getElementById("listaHistorial").innerHTML = "";
+  filtroMesActual = "";
+  document.getElementById("estadoHistorial").textContent = "Mostrando todos los registros";
+  renderHistorial();
 }
 
 function generarPDFRegistro(registro) {
@@ -1389,15 +1421,12 @@ function descargarPDFHistorialActual() {
     return;
   }
 
-  if (filtroFechaActual) {
-    if (lista.length === 1) {
-      generarPDFRegistro(lista[0]);
-    } else {
-      generarPDFHistorialGlobal(lista);
-    }
-  } else {
-    generarPDFHistorialGlobal(lista);
+  if (filtroFechaActual && lista.length === 1) {
+    generarPDFRegistro(lista[0]);
+    return;
   }
+
+  generarPDFHistorialGlobal(lista);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1436,10 +1465,24 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("nombreParada").addEventListener("input", function() {
     this.value = capitalizar(this.value);
   });
-document.getElementById("lugarViaje").addEventListener("blur", function() {
-  this.value = capitalizar(this.value);
-  guardarViajeActual();
-});
+
+  document.getElementById("lugarViaje").addEventListener("blur", function() {
+    this.value = capitalizar(this.value);
+    guardarViajeActual();
+  });
+
+  document.getElementById("filtroFecha").addEventListener("change", function() {
+    if (this.value) {
+      document.getElementById("filtroMes").value = "";
+    }
+  });
+
+  document.getElementById("filtroMes").addEventListener("change", function() {
+    if (this.value) {
+      document.getElementById("filtroFecha").value = "";
+    }
+  });
+
   setInterval(() => {
     renderEsperas();
   }, 1000);
